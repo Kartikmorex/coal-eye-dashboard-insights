@@ -31,6 +31,22 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
     return null;
   };
 
+  // Define the color mapping according to the reference image
+  const getParticleColor = (size: string) => {
+    switch (size) {
+      case "0-2mm":
+        return "#F7CA18"; // Yellow
+      case "2-6mm":
+        return "#3498DB"; // Blue
+      case "6-8mm":
+        return "#E67E22"; // Orange
+      case "8+mm":
+        return "#1A4178"; // Dark Blue
+      default:
+        return "#10b981"; // Default green
+    }
+  };
+
   return (
     <Card className="metric-card">
       <div className="mb-4">
@@ -55,11 +71,31 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
             <Tooltip content={<CustomTooltip />} />
             <Bar 
               dataKey="percentage" 
-              fill="#10b981"
               radius={[4, 4, 0, 0]}
+              fill={(entry) => getParticleColor(entry.size)}
             />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+      
+      {/* Legend for particle sizes with correct colors */}
+      <div className="mt-4 flex flex-wrap gap-4 justify-center">
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#F7CA18" }}></div>
+          <span className="text-xs text-muted-foreground">0-2mm</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#3498DB" }}></div>
+          <span className="text-xs text-muted-foreground">2-6mm</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#E67E22" }}></div>
+          <span className="text-xs text-muted-foreground">6-8mm</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#1A4178" }}></div>
+          <span className="text-xs text-muted-foreground">8+mm</span>
+        </div>
       </div>
     </Card>
   );

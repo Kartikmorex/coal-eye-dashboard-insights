@@ -5,28 +5,76 @@ import KPICard from "@/components/KPICard";
 import ConveyorCard from "@/components/ConveyorCard";
 import ParticleSizeChart from "@/components/ParticleSizeChart";
 import AlertsList from "@/components/AlertsList";
-import { conveyors, particleSizeDistribution, getSystemStats, getActiveAlerts } from "@/data/mockData";
+import TimeRangePicker from "@/components/TimeRangePicker";
+import CoalColorAnalysis from "@/components/CoalColorAnalysis";
+import SizeDistributionBoxPlot from "@/components/SizeDistributionBoxPlot";
+import { 
+  conveyors, 
+  particleSizeDistribution, 
+  getSystemStats, 
+  getActiveAlerts,
+  coalColorSummary,
+  coalColorDistribution,
+  sizeDistributionBoxPlot
+} from "@/data/mockData";
 import { BarChart3, Gauge, AlertTriangle, Loader2, Scale, Activity, TrendingUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PieChart, Pie, ResponsiveContainer, Cell } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Index = () => {
   const [timeRange, setTimeRange] = useState("24h");
+  const [selectedConveyor, setSelectedConveyor] = useState("all");
   const systemStats = getSystemStats();
   const activeAlerts = getActiveAlerts();
 
   const COLORS = ['#ef4444', '#f59e0b', '#3b82f6'];
+
+  const handleTimeRangeChange = (range: string, startDate?: Date, endDate?: Date) => {
+    setTimeRange(range);
+    console.log('Time range changed:', { range, startDate, endDate });
+    // Here you would typically fetch new data based on the time range
+  };
+
+  const handleConveyorChange = (conveyorId: string) => {
+    setSelectedConveyor(conveyorId);
+    console.log('Conveyor changed:', conveyorId);
+    // Here you would typically filter data for the specific conveyor
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Coal Sizing Monitoring Dashboard</h1>
-          <p className="text-muted-foreground">
-            Real-time monitoring and analysis of coal particle sizes across all conveyor systems
-          </p>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+            <div className="mb-4 lg:mb-0">
+              <h1 className="text-3xl font-bold text-foreground mb-2">Coal Sizing Monitoring Dashboard</h1>
+              <p className="text-muted-foreground">
+                Real-time monitoring and analysis of coal particle sizes across all conveyor systems
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-muted-foreground">Conveyor:</span>
+                <Select value={selectedConveyor} onValueChange={handleConveyorChange}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Conveyors</SelectItem>
+                    {conveyors.map((conveyor) => (
+                      <SelectItem key={conveyor.id} value={conveyor.id}>
+                        {conveyor.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <TimeRangePicker onTimeRangeChange={handleTimeRangeChange} />
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -59,12 +107,26 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
             <Tabs defaultValue="particle-size" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="particle-size">Particle Size Distribution</TabsTrigger>
-                <TabsTrigger value="alerts">Recent Alerts</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-4 mb-4">
+                <TabsTrigger value="particle-size">Particle Size</TabsTrigger>
+                <TabsTrigger value="color-analysis">Color Analysis</TabsTrigger>
+                <TabsTrigger value="box-plot">Box Plot</TabsTrigger>
+                <TabsTrigger value="alerts">Alerts</TabsTrigger>
               </TabsList>
               <TabsContent value="particle-size" className="mt-0">
-                <ParticleSizeChart data={particleSizeDistribution} title="Overall Particle Size Distribution" />
+                <ParticleSizeChart data={particleSizeDistribution} title="Particle Size Distribution" />
+              </TabsContent>
+              <TabsContent value="color-analysis" className="mt-0">
+                <CoalColorAnalysis 
+                  summaryData={coalColorSummary}
+                  distributionData={coalColorDistribution}
+                />
+              </TabsContent>
+              <TabsContent value="box-plot" className="mt-0">
+                <SizeDistributionBoxPlot 
+                  data={sizeDistributionBoxPlot}
+                  title="Size Distribution Box Plot"
+                />
               </TabsContent>
               <TabsContent value="alerts" className="mt-0">
                 <AlertsList alerts={activeAlerts} limit={5} compact />
@@ -126,7 +188,9 @@ const Index = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {conveyors.map((conveyor) => (
+            {conveyors
+              .filter(conveyor => selectedConveyor === "all" || conveyor.id === selectedConveyor)
+              .map((conveyor) => (
               <ConveyorCard 
                 key={conveyor.id}
                 id={conveyor.id}

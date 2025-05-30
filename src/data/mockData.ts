@@ -1,4 +1,3 @@
-
 export interface Conveyor {
   id: string;
   name: string;
@@ -87,61 +86,130 @@ export const conveyors: Conveyor[] = [
   }
 ];
 
-export const particleSizeDistribution: ParticleSizeData[] = [
-  { size: "0-10mm", percentage: 15, count: 1250 },
-  { size: "10-20mm", percentage: 28, count: 2340 },
-  { size: "20-30mm", percentage: 32, count: 2680 },
-  { size: "30-40mm", percentage: 18, count: 1510 },
-  { size: "40-50mm", percentage: 5, count: 420 },
-  { size: "50-60mm", percentage: 1.5, count: 125 },
-  { size: ">60mm", percentage: 0.5, count: 42 }
+// Updated particle size distribution with correct categories
+export const particleSizeDistribution = [
+  { size: "0-2mm", percentage: 35.2, count: 1520 },
+  { size: "2-6mm", percentage: 42.8, count: 2145 },
+  { size: "6-8mm", percentage: 15.6, count: 890 },
+  { size: "8+mm", percentage: 6.4, count: 325 }
 ];
 
-export const conveyorSpecificSizeDistribution: Record<string, ParticleSizeData[]> = {
-  "c001": [
-    { size: "0-10mm", percentage: 18, count: 580 },
-    { size: "10-20mm", percentage: 32, count: 1040 },
-    { size: "20-30mm", percentage: 28, count: 910 },
-    { size: "30-40mm", percentage: 16, count: 520 },
-    { size: "40-50mm", percentage: 4, count: 130 },
-    { size: "50-60mm", percentage: 1.2, count: 38 },
-    { size: ">60mm", percentage: 0.8, count: 26 }
+// Coal color analysis data
+export const coalColorSummary = [
+  { color: "black", percentage: 77.6, label: "Black" },
+  { color: "gray", percentage: 22.4, label: "Gray" }
+];
+
+export const coalColorDistribution = [
+  { date: "23 May", gray: 28, black: 72 },
+  { date: "24 May", gray: 24, black: 76 },
+  { date: "25 May", gray: 21, black: 79 },
+  { date: "26 May", gray: 20, black: 80 },
+  { date: "27 May", gray: 20, black: 80 },
+  { date: "28 May", gray: 19, black: 81 },
+  { date: "29 May", gray: 24, black: 76 }
+];
+
+// Size distribution box plot data
+export const sizeDistributionBoxPlot = [
+  { 
+    date: "23 May", 
+    min: 1.30, 
+    q1: 2.05, 
+    median: 2.15, 
+    q3: 2.24, 
+    max: 2.51,
+    outliers: [1.25]
+  },
+  { 
+    date: "24 May", 
+    min: 1.75, 
+    q1: 2.00, 
+    median: 2.10, 
+    q3: 2.20, 
+    max: 2.65
+  },
+  { 
+    date: "25 May", 
+    min: 1.95, 
+    q1: 2.15, 
+    median: 2.25, 
+    q3: 2.35, 
+    max: 2.55
+  },
+  { 
+    date: "26 May", 
+    min: 1.30, 
+    q1: 2.05, 
+    median: 2.15, 
+    q3: 2.24, 
+    max: 2.51,
+    outliers: [3.10]
+  },
+  { 
+    date: "27 May", 
+    min: 1.85, 
+    q1: 2.20, 
+    median: 2.30, 
+    q3: 2.40, 
+    max: 3.00
+  },
+  { 
+    date: "28 May", 
+    min: 2.00, 
+    q1: 2.25, 
+    median: 2.35, 
+    q3: 2.45, 
+    max: 2.75
+  },
+  { 
+    date: "29 May", 
+    min: 1.85, 
+    q1: 2.30, 
+    median: 2.45, 
+    q3: 2.60, 
+    max: 3.50,
+    outliers: [1.20]
+  }
+];
+
+// Updated conveyor-specific data with new particle sizes
+export const conveyorSpecificSizeDistribution: { [key: string]: any[] } = {
+  "CV-001": [
+    { size: "0-2mm", percentage: 38.5, count: 1650 },
+    { size: "2-6mm", percentage: 40.2, count: 2020 },
+    { size: "6-8mm", percentage: 14.8, count: 820 },
+    { size: "8+mm", percentage: 6.5, count: 310 }
   ],
-  "c002": [
-    { size: "0-10mm", percentage: 10, count: 320 },
-    { size: "10-20mm", percentage: 22, count: 710 },
-    { size: "20-30mm", percentage: 28, count: 910 },
-    { size: "30-40mm", percentage: 24, count: 780 },
-    { size: "40-50mm", percentage: 10, count: 330 },
-    { size: "50-60mm", percentage: 4, count: 130 },
-    { size: ">60mm", percentage: 2, count: 65 }
+  "CV-002": [
+    { size: "0-2mm", percentage: 32.1, count: 1380 },
+    { size: "2-6mm", percentage: 45.6, count: 2280 },
+    { size: "6-8mm", percentage: 16.2, count: 950 },
+    { size: "8+mm", percentage: 6.1, count: 290 }
   ],
-  "c003": [
-    { size: "0-10mm", percentage: 8, count: 180 },
-    { size: "10-20mm", percentage: 18, count: 410 },
-    { size: "20-30mm", percentage: 25, count: 570 },
-    { size: "30-40mm", percentage: 26, count: 590 },
-    { size: "40-50mm", percentage: 15, count: 340 },
-    { size: "50-60mm", percentage: 5, count: 110 },
-    { size: ">60mm", percentage: 3, count: 68 }
+  "CV-003": [
+    { size: "0-2mm", percentage: 34.8, count: 1520 },
+    { size: "2-6mm", percentage: 41.9, count: 2145 },
+    { size: "6-8mm", percentage: 17.1, count: 920 },
+    { size: "8+mm", percentage: 6.2, count: 315 }
   ],
-  "c004": [
-    { size: "0-10mm", percentage: 16, count: 510 },
-    { size: "10-20mm", percentage: 30, count: 960 },
-    { size: "20-30mm", percentage: 32, count: 1030 },
-    { size: "30-40mm", percentage: 15, count: 480 },
-    { size: "40-50mm", percentage: 5, count: 160 },
-    { size: "50-60mm", percentage: 1.5, count: 48 },
-    { size: ">60mm", percentage: 0.5, count: 16 }
+  "CV-004": [
+    { size: "0-2mm", percentage: 36.2, count: 1580 },
+    { size: "2-6mm", percentage: 43.1, count: 2190 },
+    { size: "6-8mm", percentage: 14.5, count: 840 },
+    { size: "8+mm", percentage: 6.2, count: 285 }
   ],
-  "c005": [
-    { size: "0-10mm", percentage: 20, count: 730 },
-    { size: "10-20mm", percentage: 38, count: 1390 },
-    { size: "20-30mm", percentage: 30, count: 1100 },
-    { size: "30-40mm", percentage: 9, count: 320 },
-    { size: "40-50mm", percentage: 2, count: 73 },
-    { size: "50-60mm", percentage: 0.8, count: 29 },
-    { size: ">60mm", percentage: 0.2, count: 7 }
+  "CV-005": [
+    { size: "0-2mm", percentage: 33.7, count: 1440 },
+    { size: "2-6mm", percentage: 44.8, count: 2260 },
+    { size: "6-8mm", percentage: 15.9, count: 890 },
+    { size: "8+mm", percentage: 5.6, count: 270 }
+  ],
+  "CV-006": [
+    { size: "0-2mm", percentage: 37.1, count: 1620 },
+    { size: "2-6mm", percentage: 41.5, count: 2155 },
+    { size: "6-8mm", percentage: 15.2, count: 870 },
+    { size: "8+mm", percentage: 6.2, count: 295 }
   ]
 };
 

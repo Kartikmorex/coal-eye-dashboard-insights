@@ -1,14 +1,19 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import KPICard from "@/components/KPICard";
 import ParticleSizeChart from "@/components/ParticleSizeChart";
 import AlertsList from "@/components/AlertsList";
+import TimeRangePicker from "@/components/TimeRangePicker";
+import CoalColorAnalysis from "@/components/CoalColorAnalysis";
+import SizeDistributionBoxPlot from "@/components/SizeDistributionBoxPlot";
 import { 
   getConveyorById, 
   getAlertsForConveyor, 
-  conveyorSpecificSizeDistribution 
+  conveyorSpecificSizeDistribution,
+  coalColorSummary,
+  coalColorDistribution,
+  sizeDistributionBoxPlot
 } from "@/data/mockData";
 import { 
   ArrowLeft, 
@@ -28,6 +33,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Alert } from "@/components/AlertsList";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const timeSeriesData = [
   { time: '08:00', avgSize: 22.5 },
@@ -50,6 +56,12 @@ const ConveyorDetail = () => {
   const [conveyor, setConveyor] = useState(getConveyorById(id || ""));
   const [alerts, setAlerts] = useState<Alert[]>(getAlertsForConveyor(id || ""));
   const [timeRange, setTimeRange] = useState("24h");
+
+  const handleTimeRangeChange = (range: string, startDate?: Date, endDate?: Date) => {
+    setTimeRange(range);
+    console.log('Time range changed:', { range, startDate, endDate });
+    // Here you would typically fetch new data based on the time range
+  };
 
   const handleAssign = (alertId: string, user: string) => {
     setAlerts(prevAlerts => 
@@ -154,10 +166,13 @@ const ConveyorDetail = () => {
               </div>
             </div>
           </div>
-          <Button variant="outline">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
+          <div className="flex items-center space-x-4">
+            <TimeRangePicker onTimeRangeChange={handleTimeRangeChange} />
+            <Button variant="outline">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -276,11 +291,35 @@ const ConveyorDetail = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <ParticleSizeChart 
-            data={conveyorSpecificSizeDistribution[conveyor.id]} 
-            title="Particle Size Distribution" 
-          />
+        <div className="mb-8">
+          <Tabs defaultValue="particle-size" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-4">
+              <TabsTrigger value="particle-size">Particle Size Distribution</TabsTrigger>
+              <TabsTrigger value="color-analysis">Coal Color Analysis</TabsTrigger>
+              <TabsTrigger value="box-plot">Size Distribution Box Plot</TabsTrigger>
+            </TabsList>
+            <TabsContent value="particle-size" className="mt-0">
+              <ParticleSizeChart 
+                data={conveyorSpecificSizeDistribution[conveyor.id]} 
+                title="Particle Size Distribution" 
+              />
+            </TabsContent>
+            <TabsContent value="color-analysis" className="mt-0">
+              <CoalColorAnalysis 
+                summaryData={coalColorSummary}
+                distributionData={coalColorDistribution}
+              />
+            </TabsContent>
+            <TabsContent value="box-plot" className="mt-0">
+              <SizeDistributionBoxPlot 
+                data={sizeDistributionBoxPlot}
+                title="Size Distribution Box Plot"
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="mb-8">
           <AlertsList 
             alerts={alerts} 
             onAssign={handleAssign}
