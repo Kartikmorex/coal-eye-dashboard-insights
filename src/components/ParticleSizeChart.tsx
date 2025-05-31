@@ -43,7 +43,7 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
         return "#3498DB"; // Blue
       case "6-8mm":
         return "#E67E22"; // Orange
-      case "8+mm":
+      case "8-15mm":
         return "#1A4178"; // Dark Blue
       default:
         return "#10b981"; // Default green
@@ -100,7 +100,7 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
         </div>
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#1A4178" }}></div>
-          <span className="text-xs text-muted-foreground">8+mm</span>
+          <span className="text-xs text-muted-foreground">8-15mm</span>
         </div>
       </div>
     </Card>

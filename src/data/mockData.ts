@@ -29,6 +29,18 @@ export interface Alert {
   status: "new" | "acknowledged" | "resolved";
 }
 
+export interface HistoricalData {
+  plantName: string;
+  cameraId: string;
+  createdAt: string;
+  particleSize0_2: number;
+  particleSize2_6: number;
+  particleSize6_8: number;
+  particleSize8_15: number;
+  blackPercentage: number;
+  grayPercentage: number;
+}
+
 export const conveyors: Conveyor[] = [
   {
     id: "c001",
@@ -37,7 +49,7 @@ export const conveyors: Conveyor[] = [
     efficiency: 92,
     alertCount: 0,
     lastUpdated: "2025-05-30 07:45:22",
-    avgParticleSize: 24.5,
+    avgParticleSize: 4.5, // 2-6mm range
     throughput: 420,
     location: "North Section"
   },
@@ -48,7 +60,7 @@ export const conveyors: Conveyor[] = [
     efficiency: 78,
     alertCount: 2,
     lastUpdated: "2025-05-30 07:42:18",
-    avgParticleSize: 38.7,
+    avgParticleSize: 7.2, // 6-8mm range
     throughput: 315,
     location: "Processing Plant"
   },
@@ -59,7 +71,7 @@ export const conveyors: Conveyor[] = [
     efficiency: 61,
     alertCount: 3,
     lastUpdated: "2025-05-30 07:30:45",
-    avgParticleSize: 42.2,
+    avgParticleSize: 9.5, // 8-15mm range
     throughput: 270,
     location: "Stockyard Area"
   },
@@ -70,7 +82,7 @@ export const conveyors: Conveyor[] = [
     efficiency: 89,
     alertCount: 0,
     lastUpdated: "2025-05-30 07:44:10",
-    avgParticleSize: 26.8,
+    avgParticleSize: 1.8, // 0-2mm range
     throughput: 380,
     location: "East Section"
   },
@@ -81,7 +93,7 @@ export const conveyors: Conveyor[] = [
     efficiency: 94,
     alertCount: 1,
     lastUpdated: "2025-05-30 07:40:33",
-    avgParticleSize: 22.1,
+    avgParticleSize: 3.1, // 2-6mm range
     throughput: 460,
     location: "Loading Facility"
   }
@@ -92,7 +104,7 @@ export const particleSizeDistribution = [
   { size: "0-2mm", percentage: 35.2, count: 1520 },
   { size: "2-6mm", percentage: 42.8, count: 2145 },
   { size: "6-8mm", percentage: 15.6, count: 890 },
-  { size: "8+mm", percentage: 6.4, count: 325 }
+  { size: "8-15mm", percentage: 6.4, count: 325 }
 ];
 
 // Coal color analysis data
@@ -174,39 +186,131 @@ export const sizeDistributionBoxPlot = [
   }
 ];
 
-// Updated conveyor-specific data with correct conveyor IDs
+// Updated conveyor-specific data with correct conveyor IDs and size ranges
 export const conveyorSpecificSizeDistribution: { [key: string]: any[] } = {
   "c001": [
     { size: "0-2mm", percentage: 38.5, count: 1650 },
     { size: "2-6mm", percentage: 40.2, count: 2020 },
     { size: "6-8mm", percentage: 14.8, count: 820 },
-    { size: "8+mm", percentage: 6.5, count: 310 }
+    { size: "8-15mm", percentage: 6.5, count: 310 }
   ],
   "c002": [
     { size: "0-2mm", percentage: 32.1, count: 1380 },
     { size: "2-6mm", percentage: 45.6, count: 2280 },
     { size: "6-8mm", percentage: 16.2, count: 950 },
-    { size: "8+mm", percentage: 6.1, count: 290 }
+    { size: "8-15mm", percentage: 6.1, count: 290 }
   ],
   "c003": [
     { size: "0-2mm", percentage: 34.8, count: 1520 },
     { size: "2-6mm", percentage: 41.9, count: 2145 },
     { size: "6-8mm", percentage: 17.1, count: 920 },
-    { size: "8+mm", percentage: 6.2, count: 315 }
+    { size: "8-15mm", percentage: 6.2, count: 315 }
   ],
   "c004": [
     { size: "0-2mm", percentage: 36.2, count: 1580 },
     { size: "2-6mm", percentage: 43.1, count: 2190 },
     { size: "6-8mm", percentage: 14.5, count: 840 },
-    { size: "8+mm", percentage: 6.2, count: 285 }
+    { size: "8-15mm", percentage: 6.2, count: 285 }
   ],
   "c005": [
     { size: "0-2mm", percentage: 33.7, count: 1440 },
     { size: "2-6mm", percentage: 44.8, count: 2260 },
     { size: "6-8mm", percentage: 15.9, count: 890 },
-    { size: "8+mm", percentage: 5.6, count: 270 }
+    { size: "8-15mm", percentage: 5.6, count: 270 }
   ]
 };
+
+// Historical data for 15-minute intervals
+export const historicalData: HistoricalData[] = [
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 11:56:33 AM",
+    particleSize0_2: 66.51,
+    particleSize2_6: 25.86,
+    particleSize6_8: 6.46,
+    particleSize8_15: 0.61,
+    blackPercentage: 86.41,
+    grayPercentage: 13.59
+  },
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 11:48:09 AM",
+    particleSize0_2: 66.64,
+    particleSize2_6: 25.71,
+    particleSize6_8: 6.48,
+    particleSize8_15: 0.63,
+    blackPercentage: 86.37,
+    grayPercentage: 13.63
+  },
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 11:45:43 AM",
+    particleSize0_2: 75.44,
+    particleSize2_6: 16.83,
+    particleSize6_8: 7.76,
+    particleSize8_15: 0.77,
+    blackPercentage: 80.43,
+    grayPercentage: 19.57
+  },
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 11:41:14 AM",
+    particleSize0_2: 71.1,
+    particleSize2_6: 19.91,
+    particleSize6_8: 8.79,
+    particleSize8_15: 1.59,
+    blackPercentage: 82.24,
+    grayPercentage: 17.76
+  },
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 11:33:42 AM",
+    particleSize0_2: 72.99,
+    particleSize2_6: 16.1,
+    particleSize6_8: 7.66,
+    particleSize8_15: 1.79,
+    blackPercentage: 83.72,
+    grayPercentage: 16.28
+  },
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 11:02:32 AM",
+    particleSize0_2: 73.73,
+    particleSize2_6: 16.83,
+    particleSize6_8: 7.96,
+    particleSize8_15: 0.77,
+    blackPercentage: 85.14,
+    grayPercentage: 14.86
+  },
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 10:40:09 AM",
+    particleSize0_2: 65.87,
+    particleSize2_6: 26.38,
+    particleSize6_8: 6.26,
+    particleSize8_15: 0.62,
+    blackPercentage: 87.94,
+    grayPercentage: 12.06
+  },
+  {
+    plantName: "Power_Plant",
+    cameraId: "Ripik-ThermalCoal",
+    createdAt: "31/05/25 10:37:02 AM",
+    particleSize0_2: 73.09,
+    particleSize2_6: 19.5,
+    particleSize6_8: 6.91,
+    particleSize8_15: 0.83,
+    blackPercentage: 86.7,
+    grayPercentage: 13.3
+  }
+];
 
 export const alerts: Alert[] = [
   {
@@ -312,4 +416,47 @@ export const getSeverityDistribution = () => {
     { name: "Warning", value: warning },
     { name: "Info", value: info }
   ];
+};
+
+// Function to filter historical data based on time range and selected conveyors
+export const getFilteredHistoricalData = (
+  startDate?: Date,
+  endDate?: Date,
+  selectedConveyors?: string[]
+): HistoricalData[] => {
+  let filteredData = [...historicalData];
+  
+  // Time filtering would be implemented here based on startDate and endDate
+  // For now, returning all data as mock implementation
+  
+  return filteredData;
+};
+
+// Function to get aggregated particle size data for selected conveyors
+export const getAggregatedParticleSizeData = (selectedConveyors: string[]) => {
+  if (selectedConveyors.length === 0 || selectedConveyors.includes("all")) {
+    return particleSizeDistribution;
+  }
+  
+  // Aggregate data from selected conveyors
+  const aggregatedData = selectedConveyors.reduce((acc, conveyorId) => {
+    const conveyorData = conveyorSpecificSizeDistribution[conveyorId];
+    if (conveyorData) {
+      conveyorData.forEach((item, index) => {
+        if (!acc[index]) {
+          acc[index] = { size: item.size, percentage: 0, count: 0 };
+        }
+        acc[index].percentage += item.percentage;
+        acc[index].count += item.count;
+      });
+    }
+    return acc;
+  }, [] as ParticleSizeData[]);
+  
+  // Average the percentages
+  const conveyorCount = selectedConveyors.length;
+  return aggregatedData.map(item => ({
+    ...item,
+    percentage: item.percentage / conveyorCount
+  }));
 };
