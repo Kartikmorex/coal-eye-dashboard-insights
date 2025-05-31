@@ -1,3 +1,4 @@
+
 export interface Conveyor {
   id: string;
   name: string;
@@ -173,43 +174,37 @@ export const sizeDistributionBoxPlot = [
   }
 ];
 
-// Updated conveyor-specific data with new particle sizes
+// Updated conveyor-specific data with correct conveyor IDs
 export const conveyorSpecificSizeDistribution: { [key: string]: any[] } = {
-  "CV-001": [
+  "c001": [
     { size: "0-2mm", percentage: 38.5, count: 1650 },
     { size: "2-6mm", percentage: 40.2, count: 2020 },
     { size: "6-8mm", percentage: 14.8, count: 820 },
     { size: "8+mm", percentage: 6.5, count: 310 }
   ],
-  "CV-002": [
+  "c002": [
     { size: "0-2mm", percentage: 32.1, count: 1380 },
     { size: "2-6mm", percentage: 45.6, count: 2280 },
     { size: "6-8mm", percentage: 16.2, count: 950 },
     { size: "8+mm", percentage: 6.1, count: 290 }
   ],
-  "CV-003": [
+  "c003": [
     { size: "0-2mm", percentage: 34.8, count: 1520 },
     { size: "2-6mm", percentage: 41.9, count: 2145 },
     { size: "6-8mm", percentage: 17.1, count: 920 },
     { size: "8+mm", percentage: 6.2, count: 315 }
   ],
-  "CV-004": [
+  "c004": [
     { size: "0-2mm", percentage: 36.2, count: 1580 },
     { size: "2-6mm", percentage: 43.1, count: 2190 },
     { size: "6-8mm", percentage: 14.5, count: 840 },
     { size: "8+mm", percentage: 6.2, count: 285 }
   ],
-  "CV-005": [
+  "c005": [
     { size: "0-2mm", percentage: 33.7, count: 1440 },
     { size: "2-6mm", percentage: 44.8, count: 2260 },
     { size: "6-8mm", percentage: 15.9, count: 890 },
     { size: "8+mm", percentage: 5.6, count: 270 }
-  ],
-  "CV-006": [
-    { size: "0-2mm", percentage: 37.1, count: 1620 },
-    { size: "2-6mm", percentage: 41.5, count: 2155 },
-    { size: "6-8mm", percentage: 15.2, count: 870 },
-    { size: "8+mm", percentage: 6.2, count: 295 }
   ]
 };
 

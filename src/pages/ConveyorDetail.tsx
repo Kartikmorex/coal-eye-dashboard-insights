@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -13,7 +14,8 @@ import {
   conveyorSpecificSizeDistribution,
   coalColorSummary,
   coalColorDistribution,
-  sizeDistributionBoxPlot
+  sizeDistributionBoxPlot,
+  particleSizeDistribution
 } from "@/data/mockData";
 import { 
   ArrowLeft, 
@@ -130,6 +132,9 @@ const ConveyorDetail = () => {
         return "Unknown";
     }
   };
+
+  // Get conveyor-specific data with fallback to general data
+  const conveyorData = conveyorSpecificSizeDistribution[conveyor.id] || particleSizeDistribution;
 
   return (
     <div className="min-h-screen bg-background">
@@ -300,7 +305,7 @@ const ConveyorDetail = () => {
             </TabsList>
             <TabsContent value="particle-size" className="mt-0">
               <ParticleSizeChart 
-                data={conveyorSpecificSizeDistribution[conveyor.id]} 
+                data={conveyorData} 
                 title="Particle Size Distribution" 
               />
             </TabsContent>
