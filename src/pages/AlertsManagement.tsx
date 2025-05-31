@@ -3,25 +3,13 @@ import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { alerts as allAlerts } from "@/data/mockData";
 import { 
-  Check, 
-  X, 
   Filter, 
   User, 
   AlertTriangle, 
   AlertOctagon, 
-  BarChart3, 
   RefreshCcw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,37 +18,102 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/AlertsList";
+import AlertsList from "@/components/AlertsList";
+import { AlertHistoryEntry } from "@/components/AlertHistoryTimeline";
 import { cn } from "@/lib/utils";
 
 const AlertsManagement = () => {
-  const [alerts, setAlerts] = useState<Alert[]>(allAlerts);
+  const [alerts, setAlerts] = useState<Alert[]>(
+    allAlerts.map(alert => ({ ...alert, history: [] }))
+  );
   const [filter, setFilter] = useState<"all" | "critical" | "warning" | "info">("all");
   const [status, setStatus] = useState<"all" | "new" | "acknowledged" | "resolved">("all");
 
-  const handleAssign = (alertId: string, user: string) => {
+  const addHistoryEntry = (alertId: string, entry: Omit<AlertHistoryEntry, 'id'>) => {
+    const historyEntry: AlertHistoryEntry = {
+      ...entry,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+    };
+
     setAlerts(prevAlerts => 
       prevAlerts.map(alert => 
-        alert.id === alertId ? { ...alert, assigned: user } : alert
+        alert.id === alertId 
+          ? { 
+              ...alert, 
+              history: [...(alert.history || []), historyEntry]
+            } 
+          : alert
       )
     );
   };
 
-  const handleAcknowledge = (alertId: string) => {
+  const handleAssign = (alertId: string, user: string | undefined) => {
     setAlerts(prevAlerts => 
-      prevAlerts.map(alert => 
-        alert.id === alertId ? { ...alert, status: "acknowledged" } : alert
-      )
+      prevAlerts.map(alert => {
+        if (alert.id === alertId) {
+          const updatedAlert = { ...alert, assigned: user };
+          
+          // Add history entry
+          const historyEntry = {
+            type: user ? "assignment" as const : "unassignment" as const,
+            user: user || alert.assigned || "Unknown",
+            timestamp: new Date().toISOString()
+          };
+          
+          addHistoryEntry(alertId, historyEntry);
+          
+          return updatedAlert;
+        }
+        return alert;
+      })
+    );
+  };
+
+  const handleAcknowledge = (alertId: string, reason: string, proof?: File) => {
+    setAlerts(prevAlerts => 
+      prevAlerts.map(alert => {
+        if (alert.id === alertId) {
+          const updatedAlert = { ...alert, status: "acknowledged" as const };
+          
+          // Add history entry
+          const historyEntry = {
+            type: "acknowledgment" as const,
+            user: alert.assigned || "Unknown User",
+            timestamp: new Date().toISOString(),
+            reason,
+            proofFile: proof?.name
+          };
+          
+          addHistoryEntry(alertId, historyEntry);
+          
+          return updatedAlert;
+        }
+        return alert;
+      })
     );
   };
 
   const handleResolve = (alertId: string) => {
     setAlerts(prevAlerts => 
-      prevAlerts.map(alert => 
-        alert.id === alertId ? { ...alert, status: "resolved" } : alert
-      )
+      prevAlerts.map(alert => {
+        if (alert.id === alertId) {
+          const updatedAlert = { ...alert, status: "resolved" as const };
+          
+          // Add history entry
+          const historyEntry = {
+            type: "resolution" as const,
+            user: alert.assigned || "Unknown User",
+            timestamp: new Date().toISOString()
+          };
+          
+          addHistoryEntry(alertId, historyEntry);
+          
+          return updatedAlert;
+        }
+        return alert;
+      })
     );
   };
 
@@ -69,39 +122,6 @@ const AlertsManagement = () => {
     let matchesStatus = status === "all" || alert.status === status;
     return matchesSeverity && matchesStatus;
   });
-
-  const getAlertTypeIcon = (type: Alert["type"]) => {
-    switch (type) {
-      case "large-particle":
-        return <BarChart3 className="h-4 w-4" />;
-      case "foreign-object":
-        return <AlertOctagon className="h-4 w-4" />;
-      case "system":
-        return <AlertTriangle className="h-4 w-4" />;
-    }
-  };
-
-  const getSeverityBadge = (severity: Alert["severity"]) => {
-    switch (severity) {
-      case "critical":
-        return <Badge variant="destructive">Critical</Badge>;
-      case "warning":
-        return <Badge variant="outline" className="border-alert-warning text-alert-warning">Warning</Badge>;
-      case "info":
-        return <Badge variant="outline" className="border-alert-info text-alert-info">Info</Badge>;
-    }
-  };
-
-  const getStatusBadge = (status: Alert["status"]) => {
-    switch (status) {
-      case "new":
-        return <Badge variant="outline" className="bg-card/50">New</Badge>;
-      case "acknowledged":
-        return <Badge variant="outline" className="border-alert-info text-alert-info">Acknowledged</Badge>;
-      case "resolved":
-        return <Badge variant="outline" className="border-alert-success text-alert-success">Resolved</Badge>;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -187,7 +207,7 @@ const AlertsManagement = () => {
                     Severity: {filter.charAt(0).toUpperCase() + filter.slice(1)}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="bg-background border border-border">
                   <DropdownMenuLabel>Filter by Severity</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setFilter("all")}>All</DropdownMenuItem>
@@ -204,7 +224,7 @@ const AlertsManagement = () => {
                     Status: {status.charAt(0).toUpperCase() + status.slice(1)}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="bg-background border border-border">
                   <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setStatus("all")}>All</DropdownMenuItem>
@@ -216,81 +236,13 @@ const AlertsManagement = () => {
             </div>
           </div>
           
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Conveyor</TableHead>
-                  <TableHead>Timestamp</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAlerts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      No alerts match your filters
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredAlerts.map((alert) => (
-                    <TableRow key={alert.id}>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {getSeverityBadge(alert.severity)}
-                          {getStatusBadge(alert.status)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {getAlertTypeIcon(alert.type)}
-                          <span className="capitalize">{alert.type.replace('-', ' ')}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{alert.description}</TableCell>
-                      <TableCell>{alert.conveyorName}</TableCell>
-                      <TableCell>{new Date(alert.timestamp).toLocaleString()}</TableCell>
-                      <TableCell>
-                        {alert.assigned ? (
-                          <div className="flex items-center space-x-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <span>{alert.assigned}</span>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground">Unassigned</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end space-x-2">
-                          {!alert.assigned && (
-                            <Button variant="outline" size="sm" onClick={() => handleAssign(alert.id, "John Doe")}>
-                              <User className="h-4 w-4" />
-                              <span className="sr-only">Assign</span>
-                            </Button>
-                          )}
-                          {alert.status === "new" && (
-                            <Button variant="outline" size="sm" onClick={() => handleAcknowledge(alert.id)}>
-                              <Check className="h-4 w-4" />
-                              <span className="sr-only">Acknowledge</span>
-                            </Button>
-                          )}
-                          {(alert.status === "new" || alert.status === "acknowledged") && (
-                            <Button variant="outline" size="sm" onClick={() => handleResolve(alert.id)}>
-                              <X className="h-4 w-4" />
-                              <span className="sr-only">Resolve</span>
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+          <div className="p-6">
+            <AlertsList
+              alerts={filteredAlerts}
+              onAssign={handleAssign}
+              onAcknowledge={handleAcknowledge}
+              onResolve={handleResolve}
+            />
           </div>
         </Card>
       </div>
