@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -81,10 +80,10 @@ export default {
 					950: '#020617'
 				},
 				alert: {
-					critical: '#ef4444',
-					warning: '#f59e0b',
-					info: '#3b82f6',
-					success: '#10b981'
+					critical: '#dc2626',
+					warning: '#ea580c',
+					info: '#2563eb',
+					success: '#16a34a'
 				}
 			},
 			borderRadius: {

@@ -34,24 +34,24 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
     return null;
   };
 
-  // Define the color mapping according to the reference image
+  // Define subtle, professional color mapping
   const getParticleColor = (size: string) => {
     switch (size) {
       case "0-2mm":
-        return "#F7CA18"; // Yellow
+        return "#f59e0b"; // Amber instead of bright yellow
       case "2-6mm":
-        return "#3498DB"; // Blue
+        return "#3b82f6"; // Blue
       case "6-8mm":
-        return "#E67E22"; // Orange
+        return "#10b981"; // Emerald
       case "8-15mm":
-        return "#1A4178"; // Dark Blue
+        return "#8b5cf6"; // Violet
       default:
-        return "#10b981"; // Default green
+        return "#6b7280"; // Gray
     }
   };
 
   return (
-    <Card className="metric-card">
+    <Card className="chart-card p-6">
       <div className="mb-4">
         <h3 className="text-lg font-semibold text-foreground">{title}</h3>
         <p className="text-sm text-muted-foreground">Particle size distribution</p>
@@ -60,14 +60,14 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="size" 
-              stroke="#94a3b8"
+              stroke="#6b7280"
               fontSize={12}
             />
             <YAxis 
-              stroke="#94a3b8"
+              stroke="#6b7280"
               fontSize={12}
               label={{ value: 'Percentage (%)', angle: -90, position: 'insideLeft' }}
             />
@@ -84,22 +84,22 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
         </ResponsiveContainer>
       </div>
       
-      {/* Legend for particle sizes with correct colors */}
+      {/* Legend for particle sizes with updated colors */}
       <div className="mt-4 flex flex-wrap gap-4 justify-center">
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#F7CA18" }}></div>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#f59e0b" }}></div>
           <span className="text-xs text-muted-foreground">0-2mm</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#3498DB" }}></div>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#3b82f6" }}></div>
           <span className="text-xs text-muted-foreground">2-6mm</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#E67E22" }}></div>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#10b981" }}></div>
           <span className="text-xs text-muted-foreground">6-8mm</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#1A4178" }}></div>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#8b5cf6" }}></div>
           <span className="text-xs text-muted-foreground">8-15mm</span>
         </div>
       </div>
