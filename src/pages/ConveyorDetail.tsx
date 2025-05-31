@@ -8,7 +8,6 @@ import AlertsList from "@/components/AlertsList";
 import TimeRangePicker from "@/components/TimeRangePicker";
 import CoalColorAnalysis from "@/components/CoalColorAnalysis";
 import SizeDistributionBoxPlot from "@/components/SizeDistributionBoxPlot";
-import LastParticlesDetected from "@/components/LastParticlesDetected";
 import { 
   getConveyorById, 
   getAlertsForConveyor, 
@@ -63,6 +62,7 @@ const ConveyorDetail = () => {
   const handleTimeRangeChange = (range: string, startDate?: Date, endDate?: Date) => {
     setTimeRange(range);
     console.log('Time range changed:', { range, startDate, endDate });
+    // Here you would typically fetch new data based on the time range
   };
 
   const handleAssign = (alertId: string, user: string) => {
@@ -91,13 +91,13 @@ const ConveyorDetail = () => {
 
   if (!conveyor) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Navigation />
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-4 font-outfit">Conveyor Not Found</h1>
-          <p className="text-muted-foreground mb-8 font-outfit">The conveyor you're looking for doesn't exist or has been removed.</p>
+          <h1 className="text-3xl font-bold text-foreground mb-4">Conveyor Not Found</h1>
+          <p className="text-muted-foreground mb-8">The conveyor you're looking for doesn't exist or has been removed.</p>
           <Link to="/">
-            <Button className="font-outfit">
+            <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Return to Dashboard
             </Button>
@@ -137,7 +137,7 @@ const ConveyorDetail = () => {
   const conveyorData = conveyorSpecificSizeDistribution[conveyor.id] || particleSizeDistribution;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
@@ -148,15 +148,15 @@ const ConveyorDetail = () => {
           </Link>
           <div className="flex-1">
             <div className="flex items-center">
-              <h1 className="text-3xl font-bold text-foreground font-outfit">{conveyor.name}</h1>
+              <h1 className="text-3xl font-bold text-foreground">{conveyor.name}</h1>
               <Badge 
                 variant={conveyor.status === "operational" ? "outline" : "destructive"}
-                className={cn("ml-4 font-outfit", conveyor.status === "operational" && "border-alert-success text-alert-success")}
+                className={cn("ml-4", conveyor.status === "operational" && "border-alert-success text-alert-success")}
               >
                 {getStatusText()}
               </Badge>
             </div>
-            <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1 font-outfit">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-1" />
                 {conveyor.location}
@@ -173,7 +173,7 @@ const ConveyorDetail = () => {
           </div>
           <div className="flex items-center space-x-4">
             <TimeRangePicker onTimeRangeChange={handleTimeRangeChange} />
-            <Button variant="outline" className="font-outfit">
+            <Button variant="outline">
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </Button>
@@ -195,7 +195,7 @@ const ConveyorDetail = () => {
           />
           <KPICard
             title="Throughput"
-            value={`${conveyor.throughput} TPH`}
+            value={`${conveyor.throughput}t/h`}
             icon={BarChart3}
           />
         </div>
@@ -203,73 +203,123 @@ const ConveyorDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <Card className="metric-card lg:col-span-2">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-foreground font-outfit">Particle Size Trend</h3>
-              <p className="text-sm text-muted-foreground font-outfit">Average particle size over time (mm)</p>
+              <h3 className="text-lg font-semibold text-foreground">Particle Size Trend</h3>
+              <p className="text-sm text-muted-foreground">Average particle size over time (mm)</p>
             </div>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={timeSeriesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="time" stroke="#64748b" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="time" stroke="#94a3b8" />
                   <YAxis 
-                    stroke="#64748b" 
+                    stroke="#94a3b8" 
                     domain={[20, 30]} 
                     label={{ value: 'Size (mm)', angle: -90, position: 'insideLeft' }}
                   />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#ffffff', 
-                      borderColor: '#e2e8f0',
-                      color: '#0f172a',
-                      borderRadius: '8px',
-                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                      backgroundColor: '#1e293b', 
+                      borderColor: '#475569',
+                      color: '#f8fafc' 
                     }} 
                   />
                   <Line 
                     type="monotone" 
                     dataKey="avgSize" 
-                    stroke="#3b82f6" 
-                    strokeWidth={3} 
-                    activeDot={{ r: 6, fill: '#3b82f6' }} 
-                    dot={{ r: 4, fill: '#3b82f6' }}
+                    stroke="#10b981" 
+                    strokeWidth={2} 
+                    activeDot={{ r: 6 }} 
+                    dot={{ r: 3 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </Card>
-          <LastParticlesDetected />
+          <Card className="metric-card">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-foreground">System Status</h3>
+              <p className="text-sm text-muted-foreground">Current operational parameters</p>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Power Consumption</span>
+                <div className="flex items-center">
+                  <div className="w-32 h-2 bg-muted rounded-full overflow-hidden mr-2">
+                    <div className="bg-primary h-full" style={{ width: '76%' }}></div>
+                  </div>
+                  <span className="text-sm font-medium">76%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Belt Speed</span>
+                <div className="flex items-center">
+                  <div className="w-32 h-2 bg-muted rounded-full overflow-hidden mr-2">
+                    <div className="bg-primary h-full" style={{ width: '92%' }}></div>
+                  </div>
+                  <span className="text-sm font-medium">92%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Motor Temperature</span>
+                <div className="flex items-center">
+                  <div className="w-32 h-2 bg-muted rounded-full overflow-hidden mr-2">
+                    <div className="bg-alert-warning h-full" style={{ width: '68%' }}></div>
+                  </div>
+                  <span className="text-sm font-medium">68°C</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Belt Tension</span>
+                <div className="flex items-center">
+                  <div className="w-32 h-2 bg-muted rounded-full overflow-hidden mr-2">
+                    <div className="bg-primary h-full" style={{ width: '84%' }}></div>
+                  </div>
+                  <span className="text-sm font-medium">84%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Vibration Level</span>
+                <div className="flex items-center">
+                  <div className="w-32 h-2 bg-muted rounded-full overflow-hidden mr-2">
+                    <div className={cn(
+                      "h-full",
+                      conveyor.status === "critical" ? "bg-alert-critical" : 
+                      conveyor.status === "warning" ? "bg-alert-warning" : "bg-primary"
+                    )} style={{ width: `${conveyor.status === "critical" ? '89' : conveyor.status === "warning" ? '62' : '45'}%` }}></div>
+                  </div>
+                  <span className="text-sm font-medium">
+                    {conveyor.status === "critical" ? '89%' : conveyor.status === "warning" ? '62%' : '45%'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
 
         <div className="mb-8">
           <Tabs defaultValue="particle-size" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-4">
-              <TabsTrigger value="particle-size" className="font-outfit">Particle Size Distribution</TabsTrigger>
-              <TabsTrigger value="color-analysis" className="font-outfit">Coal Color Analysis</TabsTrigger>
-              <TabsTrigger value="box-plot" className="font-outfit">Size Distribution Box Plot</TabsTrigger>
+              <TabsTrigger value="particle-size">Particle Size Distribution</TabsTrigger>
+              <TabsTrigger value="color-analysis">Coal Color Analysis</TabsTrigger>
+              <TabsTrigger value="box-plot">Size Distribution Box Plot</TabsTrigger>
             </TabsList>
             <TabsContent value="particle-size" className="mt-0">
-              <div className="chart-card">
-                <ParticleSizeChart 
-                  data={conveyorData} 
-                  title="Particle Size Distribution" 
-                />
-              </div>
+              <ParticleSizeChart 
+                data={conveyorData} 
+                title="Particle Size Distribution" 
+              />
             </TabsContent>
             <TabsContent value="color-analysis" className="mt-0">
-              <div className="chart-card">
-                <CoalColorAnalysis 
-                  summaryData={coalColorSummary}
-                  distributionData={coalColorDistribution}
-                />
-              </div>
+              <CoalColorAnalysis 
+                summaryData={coalColorSummary}
+                distributionData={coalColorDistribution}
+              />
             </TabsContent>
             <TabsContent value="box-plot" className="mt-0">
-              <div className="chart-card">
-                <SizeDistributionBoxPlot 
-                  data={sizeDistributionBoxPlot}
-                  title="Size Distribution Box Plot"
-                />
-              </div>
+              <SizeDistributionBoxPlot 
+                data={sizeDistributionBoxPlot}
+                title="Size Distribution Box Plot"
+              />
             </TabsContent>
           </Tabs>
         </div>

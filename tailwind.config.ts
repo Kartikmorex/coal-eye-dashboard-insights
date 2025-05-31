@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,10 +19,6 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
-				'sans': ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-				'outfit': ['Outfit', 'sans-serif'],
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -80,10 +77,10 @@ export default {
 					950: '#020617'
 				},
 				alert: {
-					critical: '#dc2626',
-					warning: '#ea580c',
-					info: '#2563eb',
-					success: '#16a34a'
+					critical: '#ef4444',
+					warning: '#f59e0b',
+					info: '#3b82f6',
+					success: '#10b981'
 				}
 			},
 			borderRadius: {
