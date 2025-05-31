@@ -1,5 +1,5 @@
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Card } from "@/components/ui/card";
 
 interface ParticleSizeData {
@@ -72,8 +72,11 @@ const ParticleSizeChart = ({ data, title }: ParticleSizeChartProps) => {
             <Bar 
               dataKey="percentage" 
               radius={[4, 4, 0, 0]}
-              fill={(entry) => getParticleColor(entry.size)}
-            />
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={getParticleColor(entry.size)} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

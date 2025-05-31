@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Tooltip, ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ReferenceLine } from 'recharts';
+import { Tooltip, ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Cell } from 'recharts';
 
 interface BoxPlotData {
   date: string;
@@ -60,6 +60,16 @@ const SizeDistributionBoxPlot = ({ data, title, className }: SizeDistributionBox
     return null;
   };
 
+  const getPointColor = (type: string) => {
+    switch (type) {
+      case 'outlier': return '#f59e0b';
+      case 'median': return '#10b981';
+      case 'box': return '#3b82f6';
+      case 'whisker': return '#6b7280';
+      default: return '#3b82f6';
+    }
+  };
+
   const allPoints = transformedData.flatMap(item => 
     item.boxData.map(point => ({ ...point, date: item.date }))
   );
@@ -100,15 +110,6 @@ const SizeDistributionBoxPlot = ({ data, title, className }: SizeDistributionBox
             {/* Box plot visualization using scatter points */}
             <Scatter 
               dataKey="y" 
-              fill={(point: any) => {
-                switch (point.type) {
-                  case 'outlier': return '#f59e0b';
-                  case 'median': return '#10b981';
-                  case 'box': return '#3b82f6';
-                  case 'whisker': return '#6b7280';
-                  default: return '#3b82f6';
-                }
-              }}
               shape={(props: any) => {
                 const { cx, cy, payload } = props;
                 switch (payload.type) {
@@ -124,7 +125,11 @@ const SizeDistributionBoxPlot = ({ data, title, className }: SizeDistributionBox
                     return <circle cx={cx} cy={cy} r={2} fill="#3b82f6" />;
                 }
               }}
-            />
+            >
+              {allPoints.map((point, index) => (
+                <Cell key={`cell-${index}`} fill={getPointColor(point.type)} />
+              ))}
+            </Scatter>
           </ScatterChart>
         </ResponsiveContainer>
       </div>
